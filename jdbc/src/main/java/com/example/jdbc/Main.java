@@ -11,13 +11,15 @@ public class Main {
         deleteUser(1);
         printUsers();
         insertUser(1, "Mr", "HisHome");
-//        printUser(1);
-//        editUser(1, "Him", "someWhere");
-//        editUserName(1, "Other");
-//        printUser(1);
-//        editUserAddress(1,  "anyWhere");
+        printUser(1);
+        editUser(1, "Him", "someWhere");
+        printUser(1);
+        editUserName(1, "Other");
+        printUser(1);
+        editUserAddress(1,  "anyWhere");
         printUsers();
         deleteUser(2);
+        printUsers();
         insertUser(2, "Ms", "HerHome");
         printUsers();
     }
@@ -25,7 +27,7 @@ public class Main {
     public static void deleteUser(int id) {
         try (Connection conn = DriverManager.getConnection(Props.getUrl(), Props.getUser(), Props.getPass());
              Statement stmt = conn.createStatement()) {
-            System.out.println("deleting..." + id);
+            System.out.println("\ndeleting..." + id);
 
             String sql = "DELETE FROM users WHERE id = " + id + ";";
             stmt.executeUpdate(sql);
@@ -37,7 +39,7 @@ public class Main {
     public static void insertUser(int id, String name, String address) {
         try (Connection conn = DriverManager.getConnection(Props.getUrl(), Props.getUser(), Props.getPass());
              Statement stmt = conn.createStatement()) {
-            System.out.println("inserting..." + id);
+            System.out.println("\ninserting..." + id);
 
             String sql = "INSERT INTO users VALUES (" + id + ", '" + name + "', '" + address + "')";
 
@@ -46,41 +48,46 @@ public class Main {
             e.printStackTrace();
         }
     }
-    //TODO FIx me
+
     public static void editUserName(int id, String name) {
+        String sql = "UPDATE users SET  name=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(Props.getUrl(), Props.getUser(), Props.getPass());
-             Statement stmt = conn.createStatement()) {
-            System.out.println("editing..." + id);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            System.out.println("\nediting..." + id);
 
-            String sql = "UPDATE users SET ( id=" + id + ", name=" + name + " WHERE id=" + id + ")";
-
-            stmt.executeUpdate(sql);
+            pstmt.setString(1, name);
+            pstmt.setInt(2, id);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    //TODO FIx me
+
     public static void editUser(int id, String name, String address) {
+        String sql = "UPDATE users SET  name=?, address=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(Props.getUrl(), Props.getUser(), Props.getPass());
-             Statement stmt = conn.createStatement()) {
-            System.out.println("editing..." + id);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            System.out.println("\nediting..." + id);
 
-            String sql = "UPDATE users SET ( id=" + id + ", name=" + name + ", address=" + address + " WHERE id=" + id + ")";
-
-            stmt.executeUpdate(sql);
+            pstmt.setString(1, name);
+            pstmt.setString(2, address);
+            pstmt.setInt(3, id);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
     //TODO FIx me
     public static void editUserAddress(int id, String address) {
+        String sql = "UPDATE users SET  address=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(Props.getUrl(), Props.getUser(), Props.getPass());
-             Statement stmt = conn.createStatement()) {
-            System.out.println("editing..." + id);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            System.out.println("\nediting..." + id);
 
-            String sql = "UPDATE users SET ( id=" + id + ", address=" + address + " WHERE id=" + id + ")";
-
-            stmt.executeUpdate(sql);
+            pstmt.setString(1, address);
+            pstmt.setInt(2, id);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -90,7 +97,7 @@ public class Main {
         try (Connection conn = DriverManager.getConnection(Props.getUrl(), Props.getUser(), Props.getPass());
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT id, name, address FROM users")) {
-            System.out.println("Printing all...");
+            System.out.println("\nPrinting all...");
 
             while (rs.next()) {
                 print(rs);
@@ -104,7 +111,7 @@ public class Main {
         try (Connection conn = DriverManager.getConnection(Props.getUrl(), Props.getUser(), Props.getPass());
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT id, name, address FROM users where id = " + id + ";")) {
-            System.out.println("Printing..." + id);
+            System.out.println("\nPrinting..." + id);
 
             while (rs.next()) {
                 print(rs);
@@ -119,5 +126,4 @@ public class Main {
         System.out.print(", Name: " + rs.getString("name"));
         System.out.println(", Address: " + rs.getString("address"));
     }
-
 }
